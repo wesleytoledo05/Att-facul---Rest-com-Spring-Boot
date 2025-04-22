@@ -1,5 +1,5 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+# This workflow will build a Java project with Maven, cache/restore any dependencies to improve the workflow execution time,
+# build a Docker image, and deploy the application to Azure Web App for staging/production.
 
 name: Java CI with Maven and Docker
 
@@ -44,11 +44,10 @@ jobs:
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
         docker push myapp
 
-    # Optional: Deploy to Azure (example)
-    # Uncomment and configure if you want to deploy to Azure or another cloud provider
-    # - name: Deploy to Azure Web App
-    #   uses: azure/webapps-deploy@v2
-    #   with:
-    #     app-name: <nome-do-app>
-    #     publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-    #     package: myapp.jar
+    # Deploy to Azure Web App
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: <nome-do-app>  # Substitua pelo nome do seu app no Azure
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}  # Secret com o perfil de publicação do Azure
+        package: target/myapp.jar  # Local do arquivo JAR gerado após o build Maven
